@@ -1,6 +1,7 @@
 package main
 
 import (
+	"blog-go/controller"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/middleware/logger"
 	"github.com/kataras/iris/v12/middleware/recover"
@@ -8,13 +9,12 @@ import (
 
 func main() {
 	app := iris.New()
-	app.Logger().SetLevel("debug")
 	app.Use(recover.New())
 	app.Use(logger.New())
 
-	app.Handle("GET", "/", func(ctx iris.Context) {
-		_, _ = ctx.HTML("<h1>Welcome<h1>")
-	})
+	BlogController := controller.NewBlogController()
+	app.Get("/ideas", BlogController.GetArticles)
+	app.Get("/idea/{id:string}", BlogController.GetArticle)
 
-	_ = app.Run(iris.Addr(":8080"), iris.WithoutServerError(iris.ErrServerClosed))
+	_ = app.Run(iris.Addr(":8080"))
 }
