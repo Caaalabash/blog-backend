@@ -12,7 +12,7 @@ func main() {
 	app := iris.New()
 	app.Use(recover.New())
 	app.Use(logger.New())
-	app.Use(func(ctx iris.Context){}, cors.New(cors.Options{
+	app.Use(cors.New(cors.Options{
 		AllowedOrigins:   []string{"https://blog.calabash.top"},
 		AllowCredentials: true,
 	}))
