@@ -78,8 +78,8 @@ func (c *BlogController) GetArticle(ctx iris.Context) {
 	defer db.Close()
 
 	e := db.C(c.collection).Find(bson.M{"_id": id}).One(&currentBlog)
-	_ = db.C(c.collection).Find(bson.M{"_id": bson.M{"$lt": id}}).Sort("-_id").Limit(1).One(&nextBlog)
-	_ = db.C(c.collection).Find(bson.M{"_id": bson.M{"$gt": id}}).Limit(1).One(&lastBlog)
+	_ = db.C(c.collection).Find(bson.M{"_id": bson.M{"$lt": id}, "blogType": "public"}).Sort("-_id").Limit(1).One(&nextBlog)
+	_ = db.C(c.collection).Find(bson.M{"_id": bson.M{"$gt": id}, "blogType": "public"}).Limit(1).One(&lastBlog)
 
 	if e != nil {
 		_, _ = ctx.JSON(&config.Response{

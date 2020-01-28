@@ -2,6 +2,7 @@ package model
 
 import (
 	"gopkg.in/mgo.v2"
+	"time"
 )
 
 var session *mgo.Session
@@ -15,6 +16,7 @@ func init() {
 		Addrs:     []string{"dockerhost"},
 		Database:  "blog",
 		PoolLimit: 4096,
+		Timeout:   time.Second * 10,
 	})
 	if err != nil {
 		panic(err)
