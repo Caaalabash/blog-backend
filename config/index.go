@@ -1,7 +1,7 @@
 package config
 
-const FailedCode = 0
-const SuccessCode = 1
+const FailedCode = 1
+const SuccessCode = 0
 
 type Response struct {
 	Code    int         `json:"code"`
