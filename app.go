@@ -5,12 +5,17 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/middleware/logger"
 	"github.com/kataras/iris/v12/middleware/recover"
+	"github.com/iris-contrib/middleware/cors"
 )
 
 func main() {
 	app := iris.New()
 	app.Use(recover.New())
 	app.Use(logger.New())
+	app.Use(func(ctx iris.Context){}, cors.New(cors.Options{
+		AllowedOrigins:   []string{"https://blog.calabash.top"},
+		AllowCredentials: true,
+	}))
 
 	BlogController := controller.NewBlogController()
 	app.Get("/ideas", BlogController.GetArticles)
