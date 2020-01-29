@@ -19,7 +19,7 @@ func New() context.Handler {
 				_, _ = ctx.JSON(&config.Response{
 					Code:    config.FailedCode,
 					Data:    nil,
-					Message: err.(string),
+					Message: fmt.Sprintf("%s", err),
 				})
 				ctx.StopExecution()
 			}

@@ -28,12 +28,10 @@ func (u *UserController) Login(ctx iris.Context) {
 	e := db.C(u.collection).Find(bson.M{
 		"userName": body.UserName,
 		"userPwd":  body.UserPwd,
-	}).One(&body)
+	}).Select(bson.M{"userPwd": 0}).One(&body)
 
 	if e != nil {
-		panic(e)
-	} else if body.ID == "" {
-		panic("用户名或密码不正确")
+		panic("用户名或密码错误")
 	} else {
 		session := auth.GetSess().Start(ctx)
 		session.Set("authenticated", true)
