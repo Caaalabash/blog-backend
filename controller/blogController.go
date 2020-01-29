@@ -102,8 +102,7 @@ func (c *BlogController) DeleteArticle(ctx iris.Context) {
 	defer db.Close()
 
 	_, e := db.C(c.collection).Find(bson.M{"_id": id}).Apply(mgo.Change{
-		Update:    bson.M{"$set": bson.M{"isActive": false}},
-		ReturnNew: true,
+		Update: bson.M{"$set": bson.M{"isActive": false}},
 	}, &model.Article{})
 
 	if e != nil {
@@ -112,6 +111,55 @@ func (c *BlogController) DeleteArticle(ctx iris.Context) {
 		_, _ = ctx.JSON(&config.Response{
 			Code:    config.SuccessCode,
 			Message: "删除成功",
+		})
+	}
+}
+
+// 修改文章
+func (c *BlogController) UpdateArticle(ctx iris.Context) {
+	var body model.Article
+	_ = ctx.ReadJSON(&body)
+	id := bson.ObjectIdHex(ctx.Params().Get("id"))
+
+	db := model.GetConn()
+	defer db.Close()
+
+	_, e := db.C(c.collection).Find(bson.M{"_id": id}).Apply(mgo.Change{
+		Update: bson.M{
+			"$set": bson.M{
+				"blogType":    body.BlogType,
+				"blogContent": body.BlogContent,
+				"blogTitle":   body.BlogTitle,
+			},
+		},
+	}, &model.Article{})
+
+	if e != nil {
+		panic(e)
+	} else {
+		_, _ = ctx.JSON(&config.Response{
+			Code:    config.SuccessCode,
+			Message: "修改成功",
+		})
+	}
+}
+
+// 创建文章
+func (c *BlogController) CreateArticle(ctx iris.Context) {
+	body := model.Article{IsActive: true}
+	_ = ctx.ReadJSON(&body)
+
+	db := model.GetConn()
+	defer db.Close()
+
+	e := db.C(c.collection).Insert(body)
+
+	if e != nil {
+		panic(e)
+	} else {
+		_, _ = ctx.JSON(&config.Response{
+			Code:    config.SuccessCode,
+			Message: "发布成功",
 		})
 	}
 }

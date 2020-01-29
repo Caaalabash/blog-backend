@@ -19,6 +19,8 @@ func main() {
 
 	BlogController := controller.NewBlogController()
 	app.Get("/ideas", BlogController.GetArticles)
+	app.Post("/idea", BlogController.CreateArticle)
+	app.Put("/idea/{id:string}", BlogController.UpdateArticle)
 	app.Get("/idea/{id:string}", BlogController.GetArticle)
 	app.Delete("/idea/{id:string}", BlogController.DeleteArticle)
 
