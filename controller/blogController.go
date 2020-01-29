@@ -42,21 +42,20 @@ func (c *BlogController) GetArticles(ctx iris.Context) {
 		query = db.C(c.collection).Find(bson.M{
 			"author":   ctx.URLParam("author"),
 			"blogType": "public",
+			"isActive": true,
 		}).Select(bson.M{
 			"blogDate":  1,
 			"blogTitle": 1,
 		})
 	} else {
 		query = db.C(c.collection).Find(bson.M{
-			"author": ctx.URLParam("author"),
+			"author":   ctx.URLParam("author"),
+			"isActive": true,
 		})
 	}
 	e := query.Sort("-blogDate").Skip(skipCount).Limit(pgS).All(&result)
 	if e != nil {
-		_, _ = ctx.JSON(&config.Response{
-			Code:    config.FailedCode,
-			Message: e.Error(),
-		})
+		panic(e)
 	} else {
 		_, _ = ctx.JSON(&config.Response{
 			Code: config.SuccessCode,
@@ -78,15 +77,11 @@ func (c *BlogController) GetArticle(ctx iris.Context) {
 	defer db.Close()
 
 	e := db.C(c.collection).Find(bson.M{"_id": id}).One(&currentBlog)
-	_ = db.C(c.collection).Find(bson.M{"_id": bson.M{"$lt": id}, "blogType": "public"}).Sort("-_id").Limit(1).One(&nextBlog)
-	_ = db.C(c.collection).Find(bson.M{"_id": bson.M{"$gt": id}, "blogType": "public"}).Limit(1).One(&lastBlog)
+	_ = db.C(c.collection).Find(bson.M{"_id": bson.M{"$lt": id}, "blogType": "public", "isActive": true}).Sort("-_id").Limit(1).One(&nextBlog)
+	_ = db.C(c.collection).Find(bson.M{"_id": bson.M{"$gt": id}, "blogType": "public", "isActive": true}).Limit(1).One(&lastBlog)
 
 	if e != nil {
-		_, _ = ctx.JSON(&config.Response{
-			Code:    config.FailedCode,
-			Data:    nil,
-			Message: e.Error(),
-		})
+		panic(e)
 	} else {
 		_, _ = ctx.JSON(&config.Response{
 			Code: config.SuccessCode,
@@ -95,6 +90,28 @@ func (c *BlogController) GetArticle(ctx iris.Context) {
 				nextBlog.ID,
 				lastBlog.ID,
 			},
+		})
+	}
+}
+
+// 删除文章，逻辑删除
+func (c *BlogController) DeleteArticle(ctx iris.Context) {
+	id := bson.ObjectIdHex(ctx.Params().Get("id"))
+
+	db := model.GetConn()
+	defer db.Close()
+
+	_, e := db.C(c.collection).Find(bson.M{"_id": id}).Apply(mgo.Change{
+		Update:    bson.M{"$set": bson.M{"isActive": false}},
+		ReturnNew: true,
+	}, &model.Article{})
+
+	if e != nil {
+		panic(e)
+	} else {
+		_, _ = ctx.JSON(&config.Response{
+			Code:    config.SuccessCode,
+			Message: "删除成功",
 		})
 	}
 }

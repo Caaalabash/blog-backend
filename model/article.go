@@ -11,4 +11,5 @@ type Article struct {
 	BlogContent string        `json:"blogContent" bson:"blogContent"`
 	BlogType    string        `json:"blogType" bson:"blogType"`
 	Author      string        `json:"author" bson:"author"`
+	IsActive    bool          `json:"isActive" bson:"isActive"`
 }
