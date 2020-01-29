@@ -103,7 +103,7 @@ func (c *BlogController) DeleteArticle(ctx iris.Context) {
 
 	_, e := db.C(c.collection).Find(bson.M{"_id": id}).Apply(mgo.Change{
 		Update: bson.M{"$set": bson.M{"isActive": false}},
-	}, &model.Article{})
+	}, nil)
 
 	if e != nil {
 		panic(e)
@@ -132,7 +132,7 @@ func (c *BlogController) UpdateArticle(ctx iris.Context) {
 				"blogTitle":   body.BlogTitle,
 			},
 		},
-	}, &model.Article{})
+	}, nil)
 
 	if e != nil {
 		panic(e)

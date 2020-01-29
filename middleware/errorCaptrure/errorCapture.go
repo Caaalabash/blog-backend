@@ -21,6 +21,7 @@ func New() context.Handler {
 					Data:    nil,
 					Message: err.(string),
 				})
+				ctx.StopExecution()
 			}
 		}()
 
