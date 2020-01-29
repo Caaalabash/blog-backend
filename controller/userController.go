@@ -36,17 +36,13 @@ func (u *UserController) Login(ctx iris.Context) {
 		session := auth.GetSess().Start(ctx)
 		session.Set("authenticated", true)
 		session.Set("userInfo", body)
-		_, _ = ctx.JSON(&config.Response{Code: config.SuccessCode, Message: "登录成功"})
+		_, _ = ctx.JSON(&config.Response{Code: config.SuccessCode, Data: body, Message: "登录成功"})
 	}
 }
 
 func (u *UserController) Logout(ctx iris.Context) {
 	auth.GetSess().Destroy(ctx)
 	_, _ = ctx.JSON(&config.Response{Code: config.SuccessCode, Message: "注销成功"})
-}
-
-func (u *UserController) Check(ctx iris.Context) {
-	_, _ = ctx.JSON(&config.Response{Code: config.SuccessCode})
 }
 
 func (u *UserController) GetUserInfo(ctx iris.Context) {

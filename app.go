@@ -31,7 +31,6 @@ func main() {
 	UserController := controller.NewUserController()
 	app.Post("/user/login", UserController.Login)
 	app.Get("/user/logout", authMiddleWare, UserController.Logout)
-	app.Get("/user/check", authMiddleWare, UserController.Check)
 	app.Get("/user/info", authMiddleWare, UserController.GetUserInfo)
 
 	_ = app.Run(iris.Addr(":8080"))
