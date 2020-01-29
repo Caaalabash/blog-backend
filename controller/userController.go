@@ -47,10 +47,5 @@ func (u *UserController) Logout(ctx iris.Context) {
 
 func (u *UserController) GetUserInfo(ctx iris.Context) {
 	session := auth.GetSess().Start(ctx)
-	if flag, _ := session.GetBoolean("authenticated"); !flag {
-		_, _ = ctx.JSON(&config.Response{Code: config.FailedCode})
-	} else {
-		_, _ = ctx.JSON(&config.Response{Code: config.SuccessCode, Data: session.Get("userInfo")})
-	}
-
+	_, _ = ctx.JSON(&config.Response{Code: config.SuccessCode, Data: session.Get("userInfo")})
 }
