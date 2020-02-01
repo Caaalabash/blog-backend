@@ -27,6 +27,7 @@ func main() {
 	app.Post("/idea", authMiddleWare, BlogController.CreateArticle)
 	app.Put("/idea/{id:string}", authMiddleWare, BlogController.UpdateArticle)
 	app.Delete("/idea/{id:string}", authMiddleWare, BlogController.DeleteArticle)
+	app.Post("idea/upload", authMiddleWare, BlogController.UploadFile)
 
 	UserController := controller.NewUserController()
 	app.Post("/user/login", UserController.Login)

@@ -3,6 +3,7 @@ package controller
 import (
 	"blog-go/config"
 	"blog-go/model"
+	"blog-go/sdk/alioss"
 	"github.com/kataras/iris/v12"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -162,4 +163,24 @@ func (c *BlogController) CreateArticle(ctx iris.Context) {
 			Message: "发布成功",
 		})
 	}
+}
+
+// 图片上传
+func (c *BlogController) UploadFile(ctx iris.Context) {
+	file, info, err := ctx.FormFile("uploadfile")
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+
+	filename := "blog-media/file/file-" + info.Filename
+	err = alioss.Bucket.PutObject(filename, file)
+	if err != nil {
+		panic(err)
+	}
+	_, _ = ctx.JSON(&config.Response{
+		Code:    config.SuccessCode,
+		Data:    config.AliOssConfig.Url + "/blog-media/file/" + filename,
+		Message: "上传成功",
+	})
 }

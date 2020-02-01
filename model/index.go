@@ -1,6 +1,8 @@
 package model
 
 import (
+	"blog-go/config"
+	"fmt"
 	"gopkg.in/mgo.v2"
 	"time"
 )
@@ -13,12 +15,13 @@ type SessionStore struct {
 
 func init() {
 	sess, err := mgo.DialWithInfo(&mgo.DialInfo{
-		Addrs:     []string{"dockerhost"},
+		Addrs:     []string{config.MongoURL},
 		Database:  "blog",
 		PoolLimit: 4096,
-		Timeout:   time.Second * 10,
+		Timeout:   time.Second * 5,
 	})
 	if err != nil {
+		fmt.Println("初始化mongodb连接失败，请检查Addrs")
 		panic(err)
 	}
 	session = sess
