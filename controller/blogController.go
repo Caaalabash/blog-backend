@@ -180,7 +180,7 @@ func (c *BlogController) UploadFile(ctx iris.Context) {
 	}
 	_, _ = ctx.JSON(&config.Response{
 		Code:    config.SuccessCode,
-		Data:    config.AliOssConfig.Url + "/blog-media/file/" + filename,
+		Data:    config.AliOssConfig.Url + filename,
 		Message: "上传成功",
 	})
 }
