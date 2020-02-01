@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Calabash's Blog</title>
+</head>
+<body>
+    <h1>Calabash's Blog</h1>
+    <ul>
+        {{ range .list }}
+            <li>
+                <a href="/Calabash/articles/{{ toString .ID }}">{{ .BlogTitle }}</a>
+            </li>
+        {{ end }}
+    </ul>
+</body>
+</html>

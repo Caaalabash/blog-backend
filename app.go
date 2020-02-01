@@ -4,6 +4,7 @@ import (
 	"blog-go/controller"
 	"blog-go/middleware/auth"
 	"blog-go/middleware/errorCaptrure"
+	"blog-go/tool"
 	"github.com/iris-contrib/middleware/cors"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/middleware/logger"
@@ -20,6 +21,11 @@ func main() {
 		AllowCredentials: true,
 	}))
 	authMiddleWare := auth.New()
+	tmpl := iris.HTML("./html", ".html")
+	tmpl.AddFunc("toString", tool.ObjectID2Str)
+	tmpl.AddFunc("toHTML", tool.MarkdownToHtml)
+	app.RegisterView(tmpl)
+
 
 	BlogController := controller.NewBlogController()
 	app.Get("/ideas", BlogController.GetArticles)
@@ -28,6 +34,10 @@ func main() {
 	app.Put("/idea/{id:string}", authMiddleWare, BlogController.UpdateArticle)
 	app.Delete("/idea/{id:string}", authMiddleWare, BlogController.DeleteArticle)
 	app.Post("/idea/upload", authMiddleWare, BlogController.UploadFile)
+	// for seo, 此处写死用户名
+	app.Get("/robot", BlogController.RenderList)
+	app.Get("/robot/Calabash", BlogController.RenderList)
+	app.Get("/robot/Calabash/articles/{id:string}", BlogController.RenderArticle)
 
 	UserController := controller.NewUserController()
 	app.Post("/user/login", UserController.Login)

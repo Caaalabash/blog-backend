@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="Calabash">
+    <meta name="description" content="Calabash's Blog">
+    <meta property="og:title" content={{.BlogTitle}}>
+    <meta property="og:type" content="website">
+    <meta property="og:description" content="Calabash's Blog">
+    <meta property="og.image" content="https://blog.calabash.top/calabash512.png">
+    <meta property="og.url" content="https://blog.calabash.top/">
+    <title>{{ .article.BlogTitle }}</title>
+</head>
+<body>
+    <h1>{{ .article.BlogTitle }}</h1>
+    <article>
+        {{ toHTML .article.BlogContent }}
+    </article>
+</body>
+</html>

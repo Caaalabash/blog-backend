@@ -184,3 +184,34 @@ func (c *BlogController) UploadFile(ctx iris.Context) {
 		Message: "上传成功",
 	})
 }
+
+// 渲染列表页
+func (c *BlogController) RenderList(ctx iris.Context) {
+	var result []model.Article
+
+	db := model.GetConn()
+	defer db.Close()
+
+	_ = db.C(c.collection).Find(bson.M{
+		"author":   "Calabash",
+		"blogType": "public",
+		"isActive": true,
+	}).Select(bson.M{"blogTitle": 1}).Sort("-blogDate").All(&result)
+
+	ctx.ViewData("list", result)
+	_ = ctx.View("index.html")
+}
+
+// 渲染文章
+func (c *BlogController) RenderArticle(ctx iris.Context) {
+	var result model.Article
+	id := bson.ObjectIdHex(ctx.Params().Get("id"))
+
+	db := model.GetConn()
+	defer db.Close()
+
+	_ = db.C(c.collection).Find(bson.M{"_id": id}).One(&result)
+
+	ctx.ViewData("article", result)
+	_ = ctx.View("article.html")
+}
