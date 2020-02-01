@@ -1,7 +1,14 @@
 version: "3"
 services:
   go_backend:
-    build: .
+    build:
+      context: .
+      args:
+        ALI_AK: ${ALI_AK}
+        ALI_SK: ${ALI_SK}
+        ALI_BUCKET: ${ALI_BUCKET}
+        ALI_ENDPOINT: ${ALI_ENDPOINT}
+        GOPROXY: "https://goproxy:cn,direct"
     container_name: "go-backend"
     ports:
       - 3000:8080
