@@ -21,7 +21,7 @@ const SuccessCode = 0
 const MongoURL = "dockerhost"
 
 var AliOssConfig = &OssConfig{
-	Url:        "https://static.calabash.top",
+	Url:        "https://static.calabash.top/",
 	EndPoint:   os.Getenv("ALI_ENDPOINT"),
 	Ak:         os.Getenv("ALI_AK"),
 	Sk:         os.Getenv("ALI_SK"),
