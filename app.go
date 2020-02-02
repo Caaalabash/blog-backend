@@ -38,6 +38,7 @@ func main() {
 	app.Get("/robot", BlogController.RenderList)
 	app.Get("/robot/Calabash", BlogController.RenderList)
 	app.Get("/robot/Calabash/articles/{id:string}", BlogController.RenderArticle)
+	app.Get("/robot/sitemap.txt", BlogController.GetSiteMap)
 
 	UserController := controller.NewUserController()
 	app.Post("/user/login", UserController.Login)

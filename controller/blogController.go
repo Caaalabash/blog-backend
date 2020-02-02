@@ -4,6 +4,7 @@ import (
 	"blog-go/config"
 	"blog-go/model"
 	"blog-go/sdk/alioss"
+	"fmt"
 	"github.com/kataras/iris/v12"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -214,4 +215,21 @@ func (c *BlogController) RenderArticle(ctx iris.Context) {
 
 	ctx.ViewData("article", result)
 	_ = ctx.View("article.html")
+}
+
+// 生成站点地图
+func (c *BlogController) GetSiteMap(ctx iris.Context) {
+	var result []model.Article
+
+	db := model.GetConn()
+	defer db.Close()
+
+	_ = db.C(c.collection).Find(bson.M{ "author": "Calabash" }).Select(bson.M{"_id" : 1}).All(&result)
+
+	text := "https://blog.calabash.top/Calabash\n"
+	for _, v := range result {
+		text += fmt.Sprintf("https://blog.calabash.top/Calabash/articles/%x", string(v.ID)) + "\n"
+	}
+
+	_, _ = ctx.Text(text)
 }
