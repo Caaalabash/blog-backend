@@ -8,6 +8,7 @@ import (
 	"github.com/kataras/iris/v12"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+	"regexp"
 	"strconv"
 )
 
@@ -205,6 +206,10 @@ func (c *BlogController) RenderList(ctx iris.Context) {
 
 // 渲染文章
 func (c *BlogController) RenderArticle(ctx iris.Context) {
+	if match, _ := regexp.MatchString(`\d{14}`, ctx.Params().Get("id")); match {
+		ctx.StatusCode(404)
+		return
+	}
 	var result model.Article
 	id := bson.ObjectIdHex(ctx.Params().Get("id"))
 
