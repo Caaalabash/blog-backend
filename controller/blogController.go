@@ -229,7 +229,7 @@ func (c *BlogController) GetSiteMap(ctx iris.Context) {
 	db := model.GetConn()
 	defer db.Close()
 
-	_ = db.C(c.collection).Find(bson.M{ "author": "Calabash" }).Select(bson.M{"_id" : 1}).All(&result)
+	_ = db.C(c.collection).Find(bson.M{"author": "Calabash"}).Select(bson.M{"_id": 1}).All(&result)
 
 	text := "https://blog.calabash.top/Calabash\n"
 	for _, v := range result {

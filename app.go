@@ -26,7 +26,6 @@ func main() {
 	tmpl.AddFunc("toHTML", tool.MarkdownToHtml)
 	app.RegisterView(tmpl)
 
-
 	BlogController := controller.NewBlogController()
 	app.Get("/ideas", BlogController.GetArticles)
 	app.Get("/idea/{id:string}", BlogController.GetArticle)
