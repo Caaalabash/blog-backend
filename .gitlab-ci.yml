@@ -1,0 +1,23 @@
+image: docker:stable
+
+services:
+  - docker:dind
+
+variables:
+  GIT_DEPTH: 1
+  GOPROXY: "https://goproxy:cn,direct"
+
+cache:
+  key: "binary"
+  untracked: true
+  paths:
+    - ./app
+
+stages:
+  - build
+
+build_binary:
+  image: golang:alpine
+  stage: build
+  script:
+    - CGO_ENABLED=0 go build app.go
