@@ -1,5 +1,3 @@
-FROM golang:1.13
+FROM alpine
 LABEL maintainer=Caaalabash
-WORKDIR /app
-COPY ./ /app
-RUN cd /app && go build app.go 
+COPY ./app /
