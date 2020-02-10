@@ -27,7 +27,10 @@ make_image:
   stage: make
   script:
     - docker login -u="$DOCKER_USERNAME_ALI" -p="$DOCKER_PASSWORD_ALI" $DOCKER_REPOSITORY_ALI
-    - docker build -t $DOCKER_REPOSITORY_ALI/calabash/blog:$CI_COMMIT_SHORT_SHA-GO -f ./Dockerfile .
+    - docker build
+        --build-arg ALI_AK=$ALI_AK ALI_SK=$ALI_SK ALI_ENDPOINT=$ALIENDPOINT ALI_BUCKET=$ALI_BUCKET
+        -t $DOCKER_REPOSITORY_ALI/calabash/blog:$CI_COMMIT_SHORT_SHA-GO
+        -f ./Dockerfile .
     - docker push $DOCKER_REPOSITORY_ALI/calabash/blog:$CI_COMMIT_SHORT_SHA-GO
 
 
