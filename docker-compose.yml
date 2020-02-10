@@ -4,7 +4,7 @@ services:
     build:
       context: .
       args:
-        GOPROXY: "https://goproxy:cn,direct"
+        GOPROXY: "https://goproxy.cn,direct"
     environment:
       ALI_AK: ${ALI_AK}
       ALI_SK: ${ALI_SK}

@@ -5,7 +5,7 @@ services:
 
 variables:
   GIT_DEPTH: 1
-  GOPROXY: "https://goproxy:cn,direct"
+  GOPROXY: "https://goproxy.cn,direct"
 
 cache:
   key: "binary"
