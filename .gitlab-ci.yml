@@ -12,10 +12,12 @@ cache:
   untracked: true
   paths:
     - ./app
+    - ./docker-compose.yml
 
 stages:
   - build
   - make
+  - deploy
 
 build_binary:
   image: golang:alpine
@@ -35,5 +37,14 @@ make_image:
         -t $DOCKER_REPOSITORY_ALI/calabash/blog:$CI_COMMIT_SHORT_SHA-GO
         -f ./Dockerfile .
     - docker push $DOCKER_REPOSITORY_ALI/calabash/blog:$CI_COMMIT_SHORT_SHA-GO
+    - sed -i "s/BUILD_ID/$CI_COMMIT_SHORT_SHA/g" ./docker-compose.yml
+
+deploy_service:
+  stage: deploy
+  script:
+    - scp ./docker-compose.yml deploy-server:~/deploy/go-blog
+    - ssh deploy-server "cd ~/deploy/go-blog && docker-compose build && docker-compose up -d"
+
+
 
 

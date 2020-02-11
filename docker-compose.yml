@@ -1,15 +1,7 @@
 version: "3"
 services:
   go_backend:
-    build:
-      context: .
-      args:
-        GOPROXY: "https://goproxy.cn,direct"
-    environment:
-      ALI_AK: ${ALI_AK}
-      ALI_SK: ${ALI_SK}
-      ALI_BUCKET: ${ALI_BUCKET}
-      ALI_ENDPOINT: ${ALI_ENDPOINT}
+    image: registry.cn-beijing.aliyuncs.com/calabash/blog:BUILD_ID-GO
     container_name: "go-backend"
     ports:
       - 3000:8080
