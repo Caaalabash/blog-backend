@@ -15,9 +15,16 @@ cache:
     - ./docker-compose.yml
 
 stages:
-  - build
-  - make
-  - deploy
+  - test
+#  - build
+#  - make
+#  - deploy
+
+test_script:
+  stage: test
+  script:
+    - whoami
+    - ls ~/.ssh
 
 build_binary:
   image: golang:alpine
