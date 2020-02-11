@@ -26,31 +26,31 @@ test_script:
     - whoami
     - ls ~/.ssh
 
-build_binary:
-  image: golang:alpine
-  stage: build
-  script:
-    - CGO_ENABLED=0 go build app.go
-
-make_image:
-  stage: make
-  script:
-    - docker login -u="$DOCKER_USERNAME_ALI" -p="$DOCKER_PASSWORD_ALI" $DOCKER_REPOSITORY_ALI
-    - docker build
-        --build-arg ALI_AK=$ALI_AK
-        --build-arg ALI_SK=$ALI_SK
-        --build-arg ALI_ENDPOINT=$ALIENDPOINT
-        --build-arg ALI_BUCKET=$ALI_BUCKET
-        -t $DOCKER_REPOSITORY_ALI/calabash/blog:$CI_COMMIT_SHORT_SHA-GO
-        -f ./Dockerfile .
-    - docker push $DOCKER_REPOSITORY_ALI/calabash/blog:$CI_COMMIT_SHORT_SHA-GO
-    - sed -i "s/BUILD_ID/$CI_COMMIT_SHORT_SHA/g" ./docker-compose.yml
-
-deploy_service:
-  stage: deploy
-  script:
-    - scp ./docker-compose.yml deploy-server:~/deploy/go-blog
-    - ssh deploy-server "cd ~/deploy/go-blog && docker-compose build && docker-compose up -d"
+#build_binary:
+#  image: golang:alpine
+#  stage: build
+#  script:
+#    - CGO_ENABLED=0 go build app.go
+#
+#make_image:
+#  stage: make
+#  script:
+#    - docker login -u="$DOCKER_USERNAME_ALI" -p="$DOCKER_PASSWORD_ALI" $DOCKER_REPOSITORY_ALI
+#    - docker build
+#        --build-arg ALI_AK=$ALI_AK
+#        --build-arg ALI_SK=$ALI_SK
+#        --build-arg ALI_ENDPOINT=$ALIENDPOINT
+#        --build-arg ALI_BUCKET=$ALI_BUCKET
+#        -t $DOCKER_REPOSITORY_ALI/calabash/blog:$CI_COMMIT_SHORT_SHA-GO
+#        -f ./Dockerfile .
+#    - docker push $DOCKER_REPOSITORY_ALI/calabash/blog:$CI_COMMIT_SHORT_SHA-GO
+#    - sed -i "s/BUILD_ID/$CI_COMMIT_SHORT_SHA/g" ./docker-compose.yml
+#
+#deploy_service:
+#  stage: deploy
+#  script:
+#    - scp ./docker-compose.yml deploy-server:~/deploy/go-blog
+#    - ssh deploy-server "cd ~/deploy/go-blog && docker-compose build && docker-compose up -d"
 
 
 
