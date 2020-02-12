@@ -22,18 +22,18 @@ make_image:
   image: docker:stable
   stage: make
   script:
-    - sed -i "s/blog:\w\+-GO/blog:$CI_COMMIT_SHORT_SHA-GO/g" docker-compose.yml
+    - sed -i "s/blog:\w\+-BE/blog:$CI_COMMIT_SHORT_SHA-BE/g" docker-compose.yml
     - docker login -u="$DOCKER_USERNAME_ALI" -p="$DOCKER_PASSWORD_ALI" $DOCKER_REPOSITORY_ALI
     - docker build
         --build-arg ALI_AK=$ALI_AK
         --build-arg ALI_SK=$ALI_SK
         --build-arg ALI_ENDPOINT=$ALI_ENDPOINT
         --build-arg ALI_BUCKET=$ALI_BUCKET
-        -t $DOCKER_REPOSITORY_ALI/calabash/blog:$CI_COMMIT_SHORT_SHA-GO
+        -t $DOCKER_REPOSITORY_ALI/calabash/blog:$CI_COMMIT_SHORT_SHA-BE
         -f ./Dockerfile .
-    - docker push $DOCKER_REPOSITORY_ALI/calabash/blog:$CI_COMMIT_SHORT_SHA-GO
-    - scp ./docker-compose.yml deploy-server:~/deploy/go-blog
-    - ssh deploy-server "cd ~/deploy/go-blog && docker-compose up -d"
+    - docker push $DOCKER_REPOSITORY_ALI/calabash/blog:$CI_COMMIT_SHORT_SHA-BE
+    - scp ./docker-compose.yml deploy-server:~/deploy/blog/be
+    - ssh deploy-server "cd ~/deploy/blog/be && docker-compose up -d"
 
 
 

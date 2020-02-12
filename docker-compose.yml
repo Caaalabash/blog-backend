@@ -1,8 +1,8 @@
 version: "3"
 services:
-  go_backend:
-    image: registry.cn-beijing.aliyuncs.com/calabash/blog:BUILD_ID-GO
-    container_name: "go-backend"
+  blog_backend:
+    image: registry.cn-beijing.aliyuncs.com/calabash/blog:BUILD_ID-BE
+    container_name: "blog-backend"
     ports:
       - 3000:8080
     network_mode: bridge
