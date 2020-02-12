@@ -6,8 +6,7 @@ cache:
   key: "binary"
   untracked: true
   paths:
-    - ./app
-    - ./docker-compose.yml
+    - ./
 
 stages:
   - build
