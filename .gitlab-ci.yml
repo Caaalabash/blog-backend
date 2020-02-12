@@ -16,11 +16,6 @@ stages:
   - make
   - deploy
 
-test_script:
-  stage: test
-  script:
-    - ssh deploy-server
-
 build_binary:
   image: golang:alpine
   stage: build
