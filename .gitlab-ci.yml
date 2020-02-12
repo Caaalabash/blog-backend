@@ -1,5 +1,3 @@
-image: golang:1.13
-
 variables:
   GIT_DEPTH: 1
   GOPROXY: "https://goproxy.cn,direct"
@@ -23,6 +21,7 @@ build_binary:
     - CGO_ENABLED=0 go build app.go
 
 make_image:
+  image: docker:stable
   stage: make
   script:
     - docker login -u="$DOCKER_USERNAME_ALI" -p="$DOCKER_PASSWORD_ALI" $DOCKER_REPOSITORY_ALI
