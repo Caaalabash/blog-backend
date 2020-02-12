@@ -22,7 +22,7 @@ make_image:
   image: docker:stable
   stage: make
   script:
-    - sed -i "s/BUILD_ID/$CI_COMMIT_SHORT_SHA/g" ./docker-compose.yml
+    - sed -i 's/blog:\w\+-GO/blog:$CI_COMMIT_SHORT_SHA-GO/g' docker-compose.yml
     - docker login -u="$DOCKER_USERNAME_ALI" -p="$DOCKER_PASSWORD_ALI" $DOCKER_REPOSITORY_ALI
     - docker build
         --build-arg ALI_AK=$ALI_AK
