@@ -1,63 +1,51 @@
 image: golang:1.13
 
-before_script:
-  - ls ~/.ssh -al
-#  - mkdir -p ~/.ssh
-#  - chmod 700 ~/.ssh
-#  - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
-#  - eval $(ssh-agent)
-#  - echo "$SSH_PRIVATE_KEY" > ~/.ssh/ci
-#  - chmod 0600 ~/.ssh/ci
-#  - ssh-add ~/.ssh/ci
-#  - ssh-keyscan -t rsa $HOST >> known_hosts
-
 variables:
   GIT_DEPTH: 1
   GOPROXY: "https://goproxy.cn,direct"
 
-#cache:
-#  key: "binary"
-#  untracked: true
-#  paths:
-#    - ./app
-#    - ./docker-compose.yml
+cache:
+  key: "binary"
+  untracked: true
+  paths:
+    - ./app
+    - ./docker-compose.yml
 
 stages:
-  - test
-#  - build
-#  - make
-#  - deploy
+  - build
+  - make
+  - deploy
 
 test_script:
   stage: test
   script:
     - ssh deploy-server
 
-#build_binary:
-#  image: golang:alpine
-#  stage: build
-#  script:
-#    - CGO_ENABLED=0 go build app.go
-#
-#make_image:
-#  stage: make
-#  script:
-#    - docker login -u="$DOCKER_USERNAME_ALI" -p="$DOCKER_PASSWORD_ALI" $DOCKER_REPOSITORY_ALI
-#    - docker build
-#        --build-arg ALI_AK=$ALI_AK
-#        --build-arg ALI_SK=$ALI_SK
-#        --build-arg ALI_ENDPOINT=$ALIENDPOINT
-#        --build-arg ALI_BUCKET=$ALI_BUCKET
-#        -t $DOCKER_REPOSITORY_ALI/calabash/blog:$CI_COMMIT_SHORT_SHA-GO
-#        -f ./Dockerfile .
-#    - docker push $DOCKER_REPOSITORY_ALI/calabash/blog:$CI_COMMIT_SHORT_SHA-GO
-#    - sed -i "s/BUILD_ID/$CI_COMMIT_SHORT_SHA/g" ./docker-compose.yml
-#
-#deploy_service:
-#  stage: deploy
-#  script:
-#    - scp ./docker-compose.yml deploy-server:~/deploy/go-blog
-#    - ssh deploy-server "cd ~/deploy/go-blog && docker-compose build && docker-compose up -d"
+build_binary:
+  image: golang:alpine
+  stage: build
+  script:
+    - CGO_ENABLED=0 go build app.go
+
+make_image:
+  stage: make
+  script:
+    - docker login -u="$DOCKER_USERNAME_ALI" -p="$DOCKER_PASSWORD_ALI" $DOCKER_REPOSITORY_ALI
+    - docker build
+        --build-arg ALI_AK=$ALI_AK
+        --build-arg ALI_SK=$ALI_SK
+        --build-arg ALI_ENDPOINT=$ALIENDPOINT
+        --build-arg ALI_BUCKET=$ALI_BUCKET
+        -t $DOCKER_REPOSITORY_ALI/calabash/blog:$CI_COMMIT_SHORT_SHA-GO
+        -f ./Dockerfile .
+    - docker push $DOCKER_REPOSITORY_ALI/calabash/blog:$CI_COMMIT_SHORT_SHA-GO
+    - sed -i "s/BUILD_ID/$CI_COMMIT_SHORT_SHA/g" ./docker-compose.yml
+
+deploy_service:
+  stage: deploy
+  script:
+    - scp ./docker-compose.yml deploy-server:~/deploy/go-blog
+    - ssh deploy-server "cd ~/deploy/go-blog && docker-compose build && docker-compose up -d"
 
 
 
