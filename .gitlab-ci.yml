@@ -1,7 +1,4 @@
-image: docker:stable
-
-services:
-  - docker:dind
+image: golang:alpine
 
 variables:
   GIT_DEPTH: 1
