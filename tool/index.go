@@ -1,6 +1,7 @@
 package tool
 
 import (
+	"encoding/json"
 	"fmt"
 	"gopkg.in/mgo.v2/bson"
 	"gopkg.in/russross/blackfriday.v2"
@@ -26,4 +27,11 @@ func MarkdownToHtml(md string) template.HTML {
 	b := Str2Bytes(md)
 	b = blackfriday.Run(b, blackfriday.WithNoExtensions())
 	return template.HTML(Bytes2Str(b))
+}
+
+func StructToMap(obj interface{}) map[string]interface{} {
+	var m map[string]interface{}
+	jsonBytes, _ := json.Marshal(obj)
+	_ = json.Unmarshal(jsonBytes, &m)
+	return m
 }

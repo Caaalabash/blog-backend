@@ -3,7 +3,9 @@ package controller
 import (
 	"blog-go/config"
 	"blog-go/model"
+	"blog-go/redis"
 	"blog-go/sdk/alioss"
+	"blog-go/tool"
 	"fmt"
 	"github.com/kataras/iris/v12"
 	"gopkg.in/mgo.v2"
@@ -14,12 +16,6 @@ import (
 
 type BlogController struct {
 	collection string
-}
-
-type ArticleWithMeta struct {
-	Article    model.Article `json:"article"`
-	NextBlogId bson.ObjectId `json:"nextBlogId"`
-	LastBlogId bson.ObjectId `json:"lastBlogId"`
 }
 
 func NewBlogController() BlogController {
@@ -71,27 +67,41 @@ func (c *BlogController) GetArticles(ctx iris.Context) {
 // 下一篇 = <id
 // 上一篇 = >id
 func (c *BlogController) GetArticle(ctx iris.Context) {
+	id := ctx.Params().Get("id")
+	exist, _ := redis.Client.Exists(id)
+	if exist == 1 {
+		_, _ = ctx.JSON(&config.Response{
+			Code: config.SuccessCode,
+			Data: redis.Client.Get(id).Result(),
+		})
+		return
+	}
 	var currentBlog model.Article
 	var nextBlog model.Article
 	var lastBlog model.Article
-	id := bson.ObjectIdHex(ctx.Params().Get("id"))
+	objectId := bson.ObjectIdHex(id)
 
 	db := model.GetConn()
 	defer db.Close()
 
-	e := db.C(c.collection).Find(bson.M{"_id": id}).One(&currentBlog)
-	_ = db.C(c.collection).Find(bson.M{"_id": bson.M{"$lt": id}, "blogType": "public", "isActive": true}).Sort("-_id").Limit(1).One(&nextBlog)
-	_ = db.C(c.collection).Find(bson.M{"_id": bson.M{"$gt": id}, "blogType": "public", "isActive": true}).Limit(1).One(&lastBlog)
+	e := db.C(c.collection).Find(bson.M{"_id": objectId}).One(&currentBlog)
+	_ = db.C(c.collection).Find(bson.M{"_id": bson.M{"$lt": objectId}, "blogType": "public", "isActive": true}).Sort("-_id").Limit(1).One(&nextBlog)
+	_ = db.C(c.collection).Find(bson.M{"_id": bson.M{"$gt": objectId}, "blogType": "public", "isActive": true}).Limit(1).One(&lastBlog)
+	_ = redis.Client.HMSet(id, tool.StructToMap(model.ArticleWithMeta{
+		Article:    currentBlog,
+		NextBlogId: nextBlog.ID,
+		LastBlogId: lastBlog.ID,
+	}))
 
 	if e != nil {
 		panic(e)
 	} else {
 		_, _ = ctx.JSON(&config.Response{
 			Code: config.SuccessCode,
-			Data: ArticleWithMeta{
-				currentBlog,
-				nextBlog.ID,
-				lastBlog.ID,
+			Data: model.ArticleWithMeta{
+				Article:    currentBlog,
+				NextBlogId: nextBlog.ID,
+				LastBlogId: lastBlog.ID,
 			},
 		})
 	}
@@ -107,6 +117,7 @@ func (c *BlogController) DeleteArticle(ctx iris.Context) {
 	_, e := db.C(c.collection).Find(bson.M{"_id": id}).Apply(mgo.Change{
 		Update: bson.M{"$set": bson.M{"isActive": false}},
 	}, nil)
+	_ = redis.Client.HSet(ctx.Params().Get("id"), "isActive", false)
 
 	if e != nil {
 		panic(e)
@@ -136,6 +147,11 @@ func (c *BlogController) UpdateArticle(ctx iris.Context) {
 			},
 		},
 	}, nil)
+	_ = redis.Client.HMSet(ctx.Params().Get("id"), map[string]interface{}{
+		"blogType":    body.BlogType,
+		"blogContent": body.BlogContent,
+		"blogTitle":   body.BlogTitle,
+	})
 
 	if e != nil {
 		panic(e)

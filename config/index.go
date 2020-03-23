@@ -1,6 +1,9 @@
 package config
 
-import "os"
+import (
+	pool "github.com/meitu/go-redis-pool"
+	"os"
+)
 
 type Response struct {
 	Code    int         `json:"code"`
@@ -26,4 +29,13 @@ var AliOssConfig = &OssConfig{
 	Ak:         os.Getenv("ALI_AK"),
 	Sk:         os.Getenv("ALI_SK"),
 	BucketName: os.Getenv("ALI_BUCKET"),
+}
+
+var RedisConfig = &pool.HAConfig{
+	Master: os.Getenv("REDIS_MASTER_URL"),
+	Slaves: []string{
+		os.Getenv("REDIS_SLAVE1_URL"),
+		os.Getenv("REDIS_SLAVE2_URL"),
+	},
+	PollType: pool.PollByWeight,
 }

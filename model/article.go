@@ -13,3 +13,9 @@ type Article struct {
 	Author      string        `json:"author" bson:"author"`
 	IsActive    bool          `json:"isActive" bson:"isActive"`
 }
+
+type ArticleWithMeta struct {
+	Article
+	NextBlogId bson.ObjectId `json:"nextBlogId"`
+	LastBlogId bson.ObjectId `json:"lastBlogId"`
+}

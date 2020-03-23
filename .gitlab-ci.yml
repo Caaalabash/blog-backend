@@ -29,6 +29,9 @@ make_image:
         --build-arg ALI_SK=$ALI_SK
         --build-arg ALI_ENDPOINT=$ALI_ENDPOINT
         --build-arg ALI_BUCKET=$ALI_BUCKET
+        --build-arg REDIS_MASTER_URL=$REDIS_MASTER_URL
+        --build-arg REDIS_SLAVE1_URL=$REDIS_SLAVE1_URL
+        --build-arg REDIS_SLAVE2_URL=$REDIS_SLAVE2_URL
         -t $DOCKER_REPOSITORY_ALI/calabash/blog:$CI_COMMIT_SHORT_SHA-BE
         -f ./Dockerfile .
     - docker push $DOCKER_REPOSITORY_ALI/calabash/blog:$CI_COMMIT_SHORT_SHA-BE
