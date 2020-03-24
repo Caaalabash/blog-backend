@@ -71,14 +71,11 @@ func (c *BlogController) GetArticle(ctx iris.Context) {
 	// 读取缓存
 	exist, _ := redis.Client.Exists(id)
 	if exist == 1 {
-		r, e := redis.Client.Get(id).Result()
-		if e == nil {
-			_, _ = ctx.JSON(&config.Response{
-				Code: config.SuccessCode,
-				Data: r,
-			})
-			return
-		}
+		_, _ = ctx.JSON(&config.Response{
+			Code: config.SuccessCode,
+			Data: redis.Client.HGetAll(id).Val(),
+		})
+		return
 	}
 	var currentBlog model.Article
 	var nextBlog model.Article
