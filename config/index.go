@@ -32,10 +32,9 @@ var AliOssConfig = &OssConfig{
 }
 
 var RedisConfig = &pool.HAConfig{
-	Master: os.Getenv("REDIS_MASTER_URL"),
+	Master: "dockerhost:9000",
 	Slaves: []string{
-		os.Getenv("REDIS_SLAVE1_URL"),
-		os.Getenv("REDIS_SLAVE2_URL"),
+		"dockerhost:9001",
+		"dockerhost:9002",
 	},
-	PollType: pool.PollByWeight,
 }
