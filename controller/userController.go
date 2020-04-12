@@ -4,8 +4,10 @@ import (
 	"blog-go/config"
 	"blog-go/middleware/auth"
 	"blog-go/model"
+	"blog-go/tool"
 	"github.com/kataras/iris/v12"
 	"gopkg.in/mgo.v2/bson"
+	"time"
 )
 
 type UserController struct {
@@ -31,6 +33,10 @@ func (u *UserController) Login(ctx iris.Context) {
 	}).Select(bson.M{"userPwd": 0}).One(&body)
 
 	if e != nil {
+		isAllowed := tool.IsActionAllowed(body.UserName, "tryLogin", time.Minute * 5, 3)
+		if !isAllowed {
+			panic("超过限制，请在五分钟后再试")
+		}
 		panic("用户名或密码错误")
 	} else {
 		session := auth.GetSess().Start(ctx)
