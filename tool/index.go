@@ -42,7 +42,7 @@ func StructToMap(obj interface{}) map[string]interface{} {
 // Redis限流
 func IsActionAllowed(client *pool.Pool, userID string, actionKey string, period time.Duration, maxCount int) bool {
 	key := fmt.Sprintf("blog-limit:%s:%s", userID, actionKey)
-	diff := period.Nanoseconds() / 1e6
+	window := period.Nanoseconds() / 1e6
 	now := time.Now().UnixNano() / 1e6
 
 	pipe, _ := client.Pipeline()
@@ -50,9 +50,9 @@ func IsActionAllowed(client *pool.Pool, userID string, actionKey string, period 
 		Score:  float64(now),
 		Member: now,
 	})
-	pipe.ZRemRangeByScore(key, "0", fmt.Sprintf("%v", now-diff))
+	pipe.ZRemRangeByScore(key, "0", fmt.Sprintf("%v", now-window))
 	pipe.ZCard(key)
-	pipe.Expire(key, time.Second*(period+1))
+	pipe.Expire(key, period+time.Second*1)
 
 	res, err := pipe.Exec()
 	if err != nil {
