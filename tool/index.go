@@ -1,10 +1,10 @@
 package tool
 
 import (
-	"blog-go/redis"
 	"encoding/json"
 	"fmt"
 	redisType "github.com/go-redis/redis/v7"
+	pool "github.com/meitu/go-redis-pool"
 	"gopkg.in/mgo.v2/bson"
 	"gopkg.in/russross/blackfriday.v2"
 	"html/template"
@@ -40,12 +40,12 @@ func StructToMap(obj interface{}) map[string]interface{} {
 }
 
 // Redis限流
-func IsActionAllowed(userID string, actionKey string, period time.Duration, maxCount int) bool {
+func IsActionAllowed(client *pool.Pool, userID string, actionKey string, period time.Duration, maxCount int) bool {
 	key := fmt.Sprintf("blog-limit:%s:%s", userID, actionKey)
 	diff := period.Nanoseconds() / 1e6
 	now := time.Now().UnixNano() / 1e6
 
-	pipe, _ := redis.Client.Pipeline()
+	pipe, _ := client.Pipeline()
 	pipe.ZAdd(key, &redisType.Z{
 		Score:  float64(now),
 		Member: now,
