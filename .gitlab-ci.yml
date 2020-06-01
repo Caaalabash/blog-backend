@@ -15,7 +15,7 @@ build_binary:
   image: golang:alpine
   stage: build
   script:
-    - cp -R ./vendor $GOPATH 2>/dev/null
+    - cp -R ./vendor $GOPATH 2>/dev/null || true
     - CGO_ENABLED=0 go build app.go
     - go mod vendor
   artifacts:
