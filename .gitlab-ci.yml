@@ -14,11 +14,9 @@ stages:
 build_binary:
   image: golang:alpine
   stage: build
-  before_script:
-    - cp -R ./vendor $GOPATH 2>/dev/null
   script:
+    - cp -R ./vendor $GOPATH 2>/dev/null
     - CGO_ENABLED=0 go build app.go
-  after_script:
     - go mod vendor
   artifacts:
     when: on_success

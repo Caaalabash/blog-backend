@@ -44,8 +44,8 @@ func setupArticle() {
 			nextBlog model.Article
 			lastBlog model.Article
 		)
-		_ = db.C(model.CollectionArticle).Find(bson.M{"_id": bson.M{"$lt": result[i]}, "blogType": "public", "isActive": true}).Sort("-_id").Limit(1).One(&nextBlog)
-		_ = db.C(model.CollectionArticle).Find(bson.M{"_id": bson.M{"$gt": result[i]}, "blogType": "public", "isActive": true}).Limit(1).One(&lastBlog)
+		_ = db.C(model.CollectionArticle).Find(bson.M{"_id": bson.M{"$lt": result[i].ID}, "blogType": "public", "isActive": true}).Sort("-_id").Limit(1).One(&nextBlog)
+		_ = db.C(model.CollectionArticle).Find(bson.M{"_id": bson.M{"$gt": result[i].ID}, "blogType": "public", "isActive": true}).Limit(1).One(&lastBlog)
 		_ = Client.HMSet(tool.ObjectID2Str(result[i].ID), tool.StructToMap(model.ArticleWithMeta{
 			Article:    result[i],
 			NextBlogId: nextBlog.ID,
