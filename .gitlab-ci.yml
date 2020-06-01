@@ -3,10 +3,9 @@ variables:
   GOPROXY: "https://goproxy.cn,direct"
 
 cache:
-  key: "binary"
-  untracked: true
+  key: "blog-go"
   paths:
-    - ./
+    - ./vendor
 
 stages:
   - build
@@ -15,10 +14,19 @@ stages:
 build_binary:
   image: golang:alpine
   stage: build
+  before_script:
+    - cp -R ./vendor $GOPATH
   script:
     - CGO_ENABLED=0 go build app.go
+  after_script:
+    - go mod vendor
+  artifacts:
+    when: on_success
+    paths:
+      - ./app
 
 make_image:
+  cache: {}
   image: docker:stable
   stage: make
   script:
@@ -32,8 +40,8 @@ make_image:
         -t $DOCKER_REPOSITORY_ALI/calabash/blog:$CI_COMMIT_SHORT_SHA-BE
         -f ./Dockerfile .
     - docker push $DOCKER_REPOSITORY_ALI/calabash/blog:$CI_COMMIT_SHORT_SHA-BE
-    - scp ./docker-compose.yml deploy-server:~/deploy/blog/be
-    - ssh deploy-server "cd ~/deploy/blog/be && docker-compose up -d"
+    - scp -P $SSH_PORT ./docker-compose.yml deploy-server:~/deploy/blog/be
+    - ssh deploy-server -p $SSH_PORT "cd ~/deploy/blog/be && docker-compose up -d"
 
 
 
