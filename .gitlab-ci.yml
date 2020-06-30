@@ -2,11 +2,6 @@ variables:
   GIT_DEPTH: 1
   GOPROXY: "https://goproxy.cn,direct"
 
-cache:
-  key: "blog-go"
-  paths:
-    - ./vendor
-
 stages:
   - build
   - make
@@ -15,16 +10,13 @@ build_binary:
   image: golang:alpine
   stage: build
   script:
-    - cp -R ./vendor $GOPATH 2>/dev/null || true
     - CGO_ENABLED=0 go build app.go
-    - go mod vendor
   artifacts:
     when: on_success
     paths:
       - ./app
 
 make_image:
-  cache: {}
   image: docker:stable
   stage: make
   script:
