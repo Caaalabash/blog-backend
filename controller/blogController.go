@@ -68,12 +68,10 @@ func (c *BlogController) GetArticles(ctx iris.Context) {
 // 上一篇 = >id
 func (c *BlogController) GetArticle(ctx iris.Context) {
 	id := ctx.Params().Get("id")
-	// 读取缓存
-	exist, _ := redis.Client.Exists(id)
-	if exist == 1 {
+	if cache := redis.Client.HGetAll(id).Val(); cache != nil {
 		_, _ = ctx.JSON(&config.Response{
 			Code: config.SuccessCode,
-			Data: redis.Client.HGetAll(id).Val(),
+			Data: cache,
 		})
 		return
 	}
