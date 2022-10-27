@@ -52,13 +52,15 @@ func (c *BlogController) GetArticles(ctx iris.Context) {
 			"isActive": true,
 		})
 	}
+	total, _ := query.Count()
 	e := query.Sort("-blogDate").Skip(skipCount).Limit(pgS).All(&result)
 	if e != nil {
 		panic(e)
 	} else {
 		_, _ = ctx.JSON(&config.Response{
-			Code: config.SuccessCode,
-			Data: result,
+			Code:  config.SuccessCode,
+			Data:  result,
+			Total: total,
 		})
 	}
 }
