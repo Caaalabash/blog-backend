@@ -16,7 +16,7 @@ func main() {
 	app.Use(logger.New())
 	app.AllowMethods(iris.MethodOptions)
 	app.Use(cors.New(cors.Options{
-		AllowedOrigins:   []string{"https://blog.calabash.top"},
+		AllowedOrigins:   []string{"https://blog.calabash.top", "http://localhost:5173"},
 		AllowedMethods:   []string{"HEAD", "GET", "POST", "PUT", "PATCH", "DELETE"},
 		AllowCredentials: true,
 	}))

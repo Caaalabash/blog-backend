@@ -8,6 +8,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 	"gopkg.in/russross/blackfriday.v2"
 	"html/template"
+	"os"
 	"time"
 	"unsafe"
 )
@@ -63,4 +64,12 @@ func IsActionAllowed(client *pool.Pool, userID string, actionKey string, period 
 		return cmd.Val() <= int64(maxCount)
 	}
 	return false
+}
+
+func GetEnv(key, fallback string) string {
+	value, exists := os.LookupEnv(key)
+	if !exists {
+		value = fallback
+	}
+	return value
 }

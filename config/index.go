@@ -1,6 +1,7 @@
 package config
 
 import (
+	"blog-go/tool"
 	pool "github.com/meitu/go-redis-pool"
 	"os"
 )
@@ -22,7 +23,9 @@ type OssConfig struct {
 
 const FailedCode = 1
 const SuccessCode = 0
-const MongoURL = "dockerhost"
+
+var AppHost = tool.GetEnv("APP_HOST", "dockerhost")
+var MongoURL = AppHost
 
 var AliOssConfig = &OssConfig{
 	Url:        "https://static.calabash.top/",
@@ -33,9 +36,9 @@ var AliOssConfig = &OssConfig{
 }
 
 var RedisConfig = &pool.HAConfig{
-	Master: "dockerhost:9000",
+	Master: AppHost + ":9000",
 	Slaves: []string{
-		"dockerhost:9001",
-		"dockerhost:9002",
+		AppHost + ":9001",
+		AppHost + ":9002",
 	},
 }
