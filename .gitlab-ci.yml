@@ -17,18 +17,17 @@ build_binary:
       - ./app
 
 make_image:
-  image: docker:stable
   stage: make
+  before_script:
+    - docker login "$DOCKER_REPOSITORY_ALI" -u="$DOCKER_USERNAME_ALI" -p="$DOCKER_PASSWORD_ALI"
   script:
     - sed -i "s/blog:\w\+-BE/blog:$CI_COMMIT_SHORT_SHA-BE/g" docker-compose.yml
-    - docker login -u="$DOCKER_USERNAME_ALI" -p="$DOCKER_PASSWORD_ALI" $DOCKER_REPOSITORY_ALI
-    - docker build
-        --build-arg ALI_AK=$ALI_AK
-        --build-arg ALI_SK=$ALI_SK
-        --build-arg ALI_ENDPOINT=$ALI_ENDPOINT
-        --build-arg ALI_BUCKET=$ALI_BUCKET
-        -t $DOCKER_REPOSITORY_ALI/calabash/blog:$CI_COMMIT_SHORT_SHA-BE
-        -f ./Dockerfile .
+    - docker build -f ./Dockerfile .
+        --build-arg ALI_AK="$ALI_AK"
+        --build-arg ALI_SK="$ALI_SK"
+        --build-arg ALI_ENDPOINT="$ALI_ENDPOINT"
+        --build-arg ALI_BUCKET="$ALI_BUCKET"
+        -t "$DOCKER_REPOSITORY_ALI"/calabash/blog:"$CI_COMMIT_SHORT_SHA"-BE
     - docker push $DOCKER_REPOSITORY_ALI/calabash/blog:$CI_COMMIT_SHORT_SHA-BE
     - scp -P $SSH_PORT ./docker-compose.yml deploy-server:~/deploy/blog/be
     - ssh deploy-server -p $SSH_PORT "cd ~/deploy/blog/be && docker-compose up -d"
